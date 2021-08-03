@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:                                           # 数据源的相关配置
-    url: jdbc:mysql://1.14.140.53:3306/monolithic-dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://1.14.140.53:30010/monolithic-dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
     password: jh541224
 
   redis:
@@ -16,7 +16,7 @@ spring:
 #   redis 单机配置
     database: 1
     host: 1.14.140.53
-    port: 6379
+    port: 30020
     jedis:
       pool:
         max-active: 100
