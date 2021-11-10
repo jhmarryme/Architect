@@ -86,11 +86,18 @@
 <!--        <artifactId>spring-boot-starter-security</artifactId>-->
 <!--        </dependency>-->
 
+        <!--    sharding-jdbc    -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+
 		<!-- mysql驱动 -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.47</version>
+			<version>8.0.17</version>
 		</dependency>
 		<!-- mybatis -->
 		<dependency>
@@ -180,7 +187,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>1.18.20</version>
         </dependency>
 
         <dependency>

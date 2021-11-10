@@ -27,7 +27,7 @@
 
   <select id="queryMyOrders" resultMap="myOrdersVO" parameterType="Map">
     SELECT
-        od.id as orderId,
+        od.order_id as orderId,
         od.created_time as createdTime,
         od.pay_method as payMethod,
         od.real_pay_amount as realPayAmount,
@@ -38,7 +38,7 @@
         orders od
     LEFT JOIN
         order_status os
-    on od.id = os.order_id
+    on od.order_id = os.order_id
     WHERE
         od.user_id = #{paramsMap.userId}
     AND
@@ -70,7 +70,7 @@
 
     <select id="queryMyOrdersDoNotUse" resultMap="myOrdersVO" parameterType="Map">
         SELECT
-        od.id as orderId,
+        od.order_id as orderId,
         od.created_time as createdTime,
         od.pay_method as payMethod,
         od.real_pay_amount as realPayAmount,
@@ -86,10 +86,10 @@
         orders od
         LEFT JOIN
         order_status os
-        on od.id = os.order_id
+        on od.order_id = os.order_id
         LEFT JOIN
         order_items oi
-        ON od.id = oi.order_id
+        ON od.order_id = oi.order_id
         WHERE
         od.user_id = #{paramsMap.userId}
         AND
@@ -110,7 +110,7 @@
         LEFT JOIN
             order_status os
         on
-            o.id = os.order_id
+            o.order_id = os.order_id
         WHERE
             o.user_id = #{paramsMap.userId}
         AND
@@ -137,7 +137,7 @@
         LEFT JOIN
           order_status os
         on
-          o.id = os.order_id
+          o.order_id = os.order_id
         WHERE
           o.is_delete = 0
         AND

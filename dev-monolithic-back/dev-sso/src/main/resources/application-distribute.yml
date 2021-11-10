@@ -1,12 +1,10 @@
 server:
-  port: 7777
-  servlet:
-    context-path: /foodie-dev-api
+  port: 8090
 
 spring:
-#  datasource:                                           # 数据源的相关配置
-#    url: jdbc:mysql://1.14.140.53:30010/monolithic-foodie-shop?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
-#    password: jh541224
+  datasource:                                           # 数据源的相关配置
+    url: jdbc:mysql://1.14.140.53:30010/monolithic-dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    password: jh541224
 
   redis:
 #   redis集群配置
