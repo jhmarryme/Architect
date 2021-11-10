@@ -8,6 +8,7 @@ public class Orders {
      * 订单主键;同时也是订单编号
      */
     @Id
+    @Column(name = "order_id")
     private String id;
 
     /**

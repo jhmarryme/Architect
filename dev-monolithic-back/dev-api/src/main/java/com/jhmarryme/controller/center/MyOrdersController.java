@@ -39,7 +39,7 @@ public class MyOrdersController extends BaseController {
             @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId,
             @ApiParam(name = "orderStatus", value = "订单状态", required = false)
-            @RequestParam Integer orderStatus,
+            @RequestParam(required = false) Integer orderStatus,
             @ApiParam(name = "page", value = "查询下一页的第几页", required = false)
             @RequestParam Integer page,
             @ApiParam(name = "pageSize", value = "分页的每一页显示的条数", required = false)
