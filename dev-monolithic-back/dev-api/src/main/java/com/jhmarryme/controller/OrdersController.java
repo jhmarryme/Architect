@@ -15,19 +15,21 @@ import com.jhmarryme.utils.RedisOperator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Api(value = "订单相关", tags = {"订单相关的api接口"})
 @RequestMapping("orders")
@@ -45,6 +47,16 @@ public class OrdersController extends BaseController {
     @Autowired
     private RedisOperator redisOperator;
 
+    @Autowired
+    private RedissonClient redisson;
+
+    @RequestMapping(path = "/getOrderToken", method = {RequestMethod.GET, RequestMethod.POST})
+    public CommonResult getOrderToken(HttpSession session) {
+        String token = UUID.randomUUID().toString();
+        redisOperator.set("ORDER_TOKEN_" + session.getId(), token, 600);
+        return CommonResult.ok(token);
+    }
+
     @ApiOperation(value = "用户下单", notes = "用户下单", httpMethod = "POST")
     @PostMapping("/create")
     public CommonResult create(
@@ -52,6 +64,29 @@ public class OrdersController extends BaseController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
+        // ==================== 幂等性改造 start ====================
+        String orderTokenKey = "ORDER_TOKEN_" + request.getSession().getId();
+        String rLockKey = "ORDER_LOCK_" + request.getSession().getId();
+        RLock rLock = redisson.getLock(rLockKey);
+        rLock.lock(5, TimeUnit.SECONDS);
+        try {
+            String token = submitOrderBO.getToken();
+            String tokenInStore = redisOperator.get(orderTokenKey);
+            if (StringUtils.isBlank(tokenInStore)) {
+                throw new RuntimeException("orderToken不存在");
+            }
+            if (!tokenInStore.equals(token)) {
+                throw new RuntimeException("orderToken不正确");
+            }
+            redisOperator.del(orderTokenKey);
+        } finally {
+            try {
+                rLock.unlock();
+            } catch (Exception ignored) {
+
+            }
+        }
+        // ==================== 幂等性改造 end ====================
         if (submitOrderBO.getPayMethod() != PayMethod.WEIXIN.type
                 && submitOrderBO.getPayMethod() != PayMethod.ALIPAY.type) {
             return CommonResult.errorMsg("支付方式不支持！");

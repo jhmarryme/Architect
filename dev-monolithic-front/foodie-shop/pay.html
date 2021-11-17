@@ -441,7 +441,8 @@
 				city: '北京',
 				district: '东城区',
 				cityArr: [],
-				districtArr: []
+				districtArr: [],
+                token: ''
 			},
 
 			watch: {
@@ -476,11 +477,15 @@
 
 				// 渲染地址信息
 				this.renderUserAddressList();
+
+                // 获取token
+                this.getOrderToken();
 			},
 			methods: {
 				goUserCenter() {
 					// 判断用户是否登录
 					var userIsLogin = this.userIsLogin;
+
 					if (!userIsLogin) {
 						// 用户未登录，则跳转
 						window.location.href = "login.html?returnUrl=" + app.centerServerUrl;
@@ -531,6 +536,8 @@
 
 					// 买家备注可以为空
 					var orderRemarker = this.orderRemarker;
+
+                    var token = this.token;
 					// console.log(orderRemarker);
 
 					var userInfo = this.userInfo;
@@ -544,6 +551,7 @@
 								"addressId": choosedAddressId,
 								"payMethod": choosedPayMethod,
 								"leftMsg": orderRemarker,
+                                "token": token,
 							},
 							{
 								headers: {
@@ -840,6 +848,27 @@
 					this.updatedAddressId = "";
 					this.flushAddressForm();
 				},
+                getOrderToken() {
+                    var userInfo = this.userInfo;
+                    // 请求后端获得最新数据
+                    var serverUrl = app.serverUrl;
+                    axios.defaults.withCredentials = true;
+                    axios.post(
+                        serverUrl + '/orders/getOrderToken', {},
+                        {
+                            headers: {
+                                'headerUserId': userInfo.id,
+                                'headerUserToken': userInfo.userUniqueToken
+                            }
+                        })
+                        .then(res => {
+                            if (res.data.status === 200) {
+                                this.token = res.data.data;
+                            } else {
+                                alert("token 获取失败")
+                            }
+                        });
+                },
 				renderUserAddressList() {
 					var userInfo = this.userInfo;
 					// 请求后端获得最新数据
